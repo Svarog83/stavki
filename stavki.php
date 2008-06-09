@@ -99,9 +99,10 @@ $RealResults = array();
 	
 $SuperTotal = array();
 
-	$TheSameArr  = $RaznArr = $IshodArr = $GroupsArr = $GroupsResults = $TotalSums = $MatchNames = $MatchResults = array();
+	$TheSameArr  = $RaznArr = $IshodArr = $GroupsArr = $GroupsResults = $TotalSums = $MatchNames = $MatchResults = $GroupExist = array();
 	
 $random_t = false;
+
 foreach ( $ResultsArr AS $match_numb => $v )
 {
 	if ( $select_user == 'random' || $random_t )
@@ -189,35 +190,44 @@ foreach ( $ResultsArr AS $match_numb => $v )
 	
 		
 
-	
-
-
-	if ( $i % 6 == 0 )
-	{
-		$t++;
-		$letter = chr ( $t );
-		
- 	}
- 	
- 	if ( !is_array( $GroupsArr[$letter] ) )
- 		$GroupsArr[$letter]  = array();
-		
 	$arr2 = explode ( '--', $v['who'] );
 	
-	$first_team = trim ( $arr2[0] );
-	$second_team = trim ( $arr2[1] );
+	$first_team = preg_replace ( "/\t /", "", str_replace ( " ", '', trim ( $arr2[0] ) ) );
+	$second_team = preg_replace ( "/\t /", "", str_replace ( " ", '', trim ( $arr2[1] ) ) );
 	
-	if ( !$GroupsArr[$letter][$first_team] )
+	if ( !isset ( $GroupExist[$first_team] ) )
+	{
+    	if ( $i % $delitel_group == 0 )
+    	{
+    		$t++;
+    		$letter = chr( $t );
+    		
+     	}
+	}
+	else 
+	{
+	    $letter = $GroupExist[$first_team];
+	}
+	
+ 	if ( !is_array( $GroupsArr[$letter] ) )
+ 		$GroupsArr[$letter]  = array();
+
+	
+	if ( !$GroupsArr[$letter][$first_team] && !isset( $GroupExist[$first_team] ) )
+	{
 		$GroupsArr[$letter][$first_team] = 1;
+		$GroupExist[$first_team] = $letter;
+	}
 		
-	if ( !$GroupsArr[$letter][$second_team] )
+	if ( !$GroupsArr[$letter][$second_team] && !isset( $GroupExist[$second_team] ) )
+	{
 		$GroupsArr[$letter][$second_team] = 1;
+		$GroupExist[$second_team] = $letter;
+	}
 		
 	foreach ( $v['users'] AS $name => $result )
 	{
 		$arr = explode ( ':', $result );
-		
-//		if ( $name = 'serg' && $first_team == 'Украина' || )
 		
 		if ( !isset ( $GroupsResults[$letter][$name][$first_team]['points'] ) )
 		{

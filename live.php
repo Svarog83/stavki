@@ -51,7 +51,9 @@ if ( $_REQUEST['todo'] == 'form_2' )
 
 	require_once ( "$DOCUMENT_ROOT/incl_main/dBug.php" );
 ?>
-
+Счет: <b><?= $result_sum?></b> &nbsp;&nbsp;
+Разница: <b><?= $diff_score_sum?></b> &nbsp;&nbsp;
+Исход: <b><?= $ishod_sum?></b>
 <center><a href="stavki.php?ent=<?= $ent?>">Go Back</a></center>
 
 <?
@@ -99,9 +101,10 @@ if ( $_REQUEST['todo'] == 'form_2' )
 
 	$SuperTotal = array();
 
-	$TheSameArr  = $RaznArr = $IshodArr = $GroupsArr = $GroupsResults = $TotalSums = $MatchResults = $UsersResults = array();
+	$TheSameArr  = $RaznArr = $IshodArr = $GroupsArr = $GroupsResults = $TotalSums = $MatchResults = $UsersResults = $GroupExist = array();
 	
 $random_t = false;
+
 foreach ( $ResultsArr AS $match_numb => $v )
 {
 	$real_result = $RealResults[$match_numb];
@@ -128,28 +131,53 @@ foreach ( $ResultsArr AS $match_numb => $v )
 		}
 		$j++;
 	}
-
-	if ( $i % 6 == 0 )
+    
+	$arr2 = explode ( '--', $v['who'] );
+	
+	$first_team = preg_replace ( "/\t /", "", str_replace ( " ", '', trim ( $arr2[0] ) ) );
+	$second_team = preg_replace ( "/\t /", "", str_replace ( " ", '', trim ( $arr2[1] ) ) );
+	
+	if ( !isset ( $GroupExist[$first_team] ) )
 	{
-		$t++;
-		$letter = chr( $t );
-		
- 	}
+    	if ( $i % $delitel_group == 0 )
+    	{
+    		$t++;
+    		$letter = chr( $t );
+    		
+     	}
+	}
+	else 
+	{
+	    $letter = $GroupExist[$first_team];
+	}
  	
  	if ( !is_array( $GroupsArr[$letter] ) )
  		$GroupsArr[$letter]  = array();
 		
-	$arr2 = explode ( '--', $v['who'] );
 	
-	$first_team = trim ( $arr2[0] );
-	$second_team = trim ( $arr2[1] );
 	
-	if ( !$GroupsArr[$letter][$first_team] )
+	/*echo '<br>$first_team = ' . var_dump ( $first_team ) . '';
+	echo '<br>$second_team = ' . $second_team . '';
+	echo '<br>exist = ' . var_dump ( isset ( $GroupExist[$first_team] ) ) . '<br>';
+	new d( $GroupsArr , 'arr' );
+	new d( $GroupExist , 'arr' );*/
+	
+	
+	if ( !$GroupsArr[$letter][$first_team] && !isset( $GroupExist[$first_team] ) )
+	{
 		$GroupsArr[$letter][$first_team] = 1;
+		$GroupExist[$first_team] = $letter;
+	}
 		
-	if ( !$GroupsArr[$letter][$second_team] )
+	if ( !$GroupsArr[$letter][$second_team] && !isset( $GroupExist[$second_team] ) )
+	{
 		$GroupsArr[$letter][$second_team] = 1;
-		
+		$GroupExist[$second_team] = $letter;
+	}
+	
+	/*new d( $GroupsArr , 'arr' );
+	
+	echo '<br><br><hr>';*/
 		
 	if ( !isset ( $GroupsResults[$letter][$first_team]['points'] ) )
 	{
@@ -216,7 +244,7 @@ fclose( $file );
 
 <br>
 
-<img src="graph.php" width="1024" height="600" border="0">
+<img src="graph.php?ent=<?= $ent?>" width="1024" height="600" border="0">
 
 <br>
 <br>
@@ -335,7 +363,10 @@ else
 
 </select>-->
 
-<input type="submit"  value="Go!" >
+Счет: <input type="text" name="result_sum" value="<?= $result_sum?>" size="5"> &nbsp;&nbsp;
+Разница: <input type="text" name="diff_score_sum" value="<?= $diff_score_sum?>" size="5"> &nbsp;&nbsp;
+Исход: <input type="text" name="ishod_sum" value="<?= $ishod_sum?>" size="5"> 
+<input type="submit"  value="Подсчитать деньги!" >
 
 <br>
 <br>
@@ -343,7 +374,6 @@ else
 <table border="0" style="border-collapse:collapse; border: 1px solid black;" width="500">
 <tr><td colspan="3"><b>Уже сыгранные матчи</b></tr>
 <?
-$MatchNames = unserialize( 'a:48:{i:1;s:22:"Германия -- Коста-Рика";i:2;s:17:"Польша -- Эквадор";i:17;s:18:"Германия -- Польша";i:18;s:21:"Эквадор -- Коста-Рика";i:33;s:19:"Эквадор -- Германия";i:34;s:20:"Коста-Рика -- Польша";i:3;s:18:"Англия -- Парагвай";i:4;s:27:"Тринидад и Тобаго -- Швеция";i:19;s:27:"Англия -- Тринидад и Тобаго";i:20;s:18:"Швеция -- Парагвай";i:35;s:16:"Швеция -- Англия";i:36;s:29:"Парагвай -- Тринидад и Тобаго";i:5;s:24:"Аргентина -- Кот-д\'Ивуар";i:6;s:32:"Сербия и Черногория -- Голландия";i:21;s:32:"Аргентина -- Сербия и Черногория";i:22;s:24:"Голландия -- Кот-д\'Ивуар";i:37;s:22:"Голландия -- Аргентина";i:38;s:34:"Кот-д\'Ивуар -- Сербия и Черногория";i:7;s:15:"Мексика -- Иран";i:8;s:20:"Ангола -- Португалия";i:23;s:17:"Мексика -- Ангола";i:24;s:18:"Португалия -- Иран";i:39;s:21:"Португалия -- Мексика";i:40;s:14:"Иран -- Ангола";i:9;s:14:"Италия -- Гана";i:10;s:12:"США -- Чехия";i:25;s:13:"Италия -- США";i:26;s:13:"Чехия -- Гана";i:41;s:15:"Чехия -- Италия";i:42;s:11:"Гана -- США";i:11;s:20:"Бразилия -- Хорватия";i:12;s:19:"Австралия -- Япония";i:27;s:21:"Бразилия -- Австралия";i:28;s:18:"Япония -- Хорватия";i:43;s:18:"Япония -- Бразилия";i:44;s:21:"Хорватия -- Австралия";i:13;s:20:"Франция -- Швейцария";i:14;s:13:"Корея -- Того";i:29;s:16:"Франция -- Корея";i:30;s:17:"Того -- Швейцария";i:45;s:15:"Того -- Франция";i:46;s:18:"Швейцария -- Корея";i:15;s:18:"Испания -- Украина";i:16;s:26:"Тунис -- Саудовская Аравия";i:31;s:16:"Испания -- Тунис";i:32;s:28:"Саудовская Аравия -- Украина";i:47;s:28:"Саудовская Аравия -- Испания";i:48;s:16:"Украина -- Тунис";}' );
 	
 	$str = file_get_contents( $file_real_res );
 	$ResultsArr = unserialize( $str );

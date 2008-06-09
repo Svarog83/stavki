@@ -33,6 +33,8 @@ if ( $ent == 'wc2006' )
 	$diff_score_sum = 140;
 	$ishod_sum 		= 80;
 	
+	$delitel_group = 6;
+	
 }
 
 else if ( $ent == 'euro2008' )
@@ -59,8 +61,13 @@ else if ( $ent == 'euro2008' )
 	
 	$secret_pass = 'preved';
 	
-	$result_sum 	= 300;
-	$diff_score_sum = 200;
-	$ishod_sum 		= 100;
+	
+	if ( !$_POST['result_sum'] || !$_POST['diff_score_sum'] || !$_POST['ishod_sum'] )
+	{
+    	$result_sum 	= 300;
+    	$diff_score_sum = 200;
+    	$ishod_sum 		= 100;
+	}
+	$delitel_group = 2;
 	
 }
