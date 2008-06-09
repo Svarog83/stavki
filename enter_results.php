@@ -3,7 +3,7 @@ require_once( 'files.php' );
 //error_reporting(0);
 if ( $_REQUEST['todo'] == 'form_2' )
 {
-	if ( $pass == 'preved' )
+	if ( $pass == $secret_pass )
 	{
 		$ResultsArr = array();
 		foreach ( $match_result AS $match_numb => $result )
@@ -15,7 +15,7 @@ if ( $_REQUEST['todo'] == 'form_2' )
 		fwrite( $file, serialize( $ResultsArr ) );
 		fclose( $file );
 		
-		header( 'Location: enter_results.php' );
+		header( 'Location: enter_results.php?ent=' . $ent );
 	}
 	else 	
 		echo 'Wrong pass!';
@@ -30,12 +30,13 @@ else
 ?>
 <html>
 <body>
+
 <form method="post" name="form" action="enter_results.php">
 <input type="hidden" name="ent" value="<?= $ent?>">
 
 <input type="hidden" name="todo" value="form_2">
-
-<a href="live.php?ent=<?= $ent?>">Настоящие данные</a> | <a href="enter_results.php?ent=<?= $ent?>">Ввод результатов</a> | <a href="stavki.php?ent=<?= $ent?>">Тест</a>
+<h1><?= $title?></h1>
+<a href="live.php?ent=<?= $ent?>">Настоящие данные</a> | <a href="enter_results.php?ent=<?= $ent?>">Ввод результатов</a> | <a href="stavki.php?ent=<?= $ent?>">Тест</a> | <a href="index.php">Домой</a>
 <br>
 <br>
 
@@ -43,7 +44,8 @@ Password: <input type="password" name="pass" size="10" value="preved">
 
 <table>
 <?
-for ( $i = 1; $i < 49; $i++ )
+$count = count ( $MatchNames ) + 1;
+for ( $i = 1; $i < $count; $i++ )
 {
 ?>
 

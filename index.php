@@ -10,7 +10,7 @@
 
  <body>
 Выберите мероприятие:<br>
-<li><a href="live.php?ent=wc2006">Чемпионат Мира 2006</a><br><br>
+<li><a href="live.php?ent=wc2006">Чемпионат Мира 2006</a><br>
 <li><a href="live.php?ent=euro2008">Чемпионат Европы 2008</a>
 
  </body>

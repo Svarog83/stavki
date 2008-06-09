@@ -37,9 +37,9 @@ function CountSums ( $v, $sum_compare, $name_compare )
 }
 
 ?>
+<h1><?= $title?></h1>
 
-
-<a href="live.php">Настоящие данные</a> | <a href="enter_results.php">Ввод результатов</a> | <a href="stavki.php">Тест</a>
+<a href="live.php?ent=<?= $ent?>">Настоящие данные</a> | <a href="enter_results.php?ent=<?= $ent?>">Ввод результатов</a> | <a href="stavki.php?ent=<?= $ent?>">Тест</a> | <a href="index.php">Домой</a>
 <br>
 <br>
 
@@ -50,16 +50,36 @@ if ( $_REQUEST['todo'] == 'form_2' )
 	ob_start();
 	require_once ( "$DOCUMENT_ROOT/incl_main/dBug.php" );
 	
-$file = file ( $file_res );
-
-$ResultsArr  = array();
-
-foreach ( $file AS $str )
-{
-	$arr_t = explode( '|', $str );
-	$arr_t[0] = intval( $arr_t[0] );
-	$ResultsArr[$arr_t[0]] = array( 'numb' => trim ( $arr_t[0] ), 'who' => trim ( $arr_t[1] ), 'where' => trim ( $arr_t[2] ), 'users' => array (  'serg' => trim ( $arr_t[3] ), 'alex' => trim ( str_replace ( '-', ':', $arr_t[4] ) ), 'father' => trim ( $arr_t[5] ), 'alena' => trim ( str_replace ( '-', ':', $arr_t[6] ) ) ) );
-}
+	$file = file ( $file_res );
+	
+	$ResultsArr  = array();
+	
+	$UserOrder = array();
+	foreach ( $file AS $k => $str )
+	{
+		$arr_t = explode( '|', $str );
+		$count = count ( $arr_t );
+		
+		if ( $k == 0 )
+		{
+			for ( $i = 3; $i < $count; $i++ )
+			{
+				$UserOrder[$i] = trim ( $arr_t[$i] );
+			}
+			
+		}
+		else 
+		{
+			$arr_t[0] = intval( $arr_t[0] );
+			$ResultsArr[$arr_t[0]] = array( 'numb' => trim ( $arr_t[0] ), 'who' => trim ( $arr_t[1] ), 'where' => trim ( $arr_t[2] ) );
+			
+			for ( $i = 3; $i < $count; $i++ )
+			{
+				$ResultsArr[$arr_t[0]]['users'][$UserOrder[$i]] = trim ( str_replace ( '-', ':', $arr_t[$i] ) );
+			}
+			
+		}
+	}
 
 
 //ksort( $ResultsArr );
@@ -239,51 +259,6 @@ foreach ( $TotalSums AS $match_numb => $v )
 	}
 	
 }
-
-/*$TestArr = $TempArr = array();
-
-foreach ($EndResults as $match_numb => $v ) 
-{
-	foreach ( $v  as $name => $value ) 
-	{
-		$TempArr[$name] += $value['total'];
-		$TestArr[$name][]	= $TempArr[$name];
-	}
-}
-
-//	$ydata = $v;
-	
-	// Create the graph. 
-	$graph = new Graph(650,250,"auto");	
-	$graph->SetScale("textlin");
-//	$graph->img->SetMargin(30,90,40,50);
-	$graph->xaxis->SetFont(FF_FONT1,FS_BOLD);
-	$graph->xaxis->HideLabels();
-	$graph->title->Set("Example 1.1 same y-values");
-	
-	$colors = array ( 'serg' => 'blue', 'alex' =>'green', 'father' =>'yellow', 'alena' =>'red' );
-	
-	foreach ( $TestArr AS $name => $arr )
-	{
-		$color = $colors[$name];
-		// Create the linear plot
-		$lineplot=new LinePlot($arr);
-		$lineplot->SetLegend($name);
-		$lineplot->SetColor($color);
-		
-//		$lineplot-> mark->SetType(MARK_UTRIANGLE );
-		$lineplot->SetWeight(1);
-		$graph->Add($lineplot);
-		unset ( $lineplot );
-	}		
-
-	// Adjust the legend position
-	$graph->legend->SetLayout(LEGEND_HOR);
-	$graph->legend->Pos(0.4,0.95,"center","bottom");
-	
-	$graph->Stroke( );*/
-	
-	// Display the graph
 
 
 ?>

@@ -62,11 +62,9 @@ foreach ( $EndResults as $match_numb => $v )
 //	$graph->xaxis->HideLabels();
 	$graph->title->Set("Results");
 	
-	$colors = array ( 'serg' => 'blue', 'alex' =>'green', 'father' =>'yellow', 'alena' =>'red' );
-	
 	foreach ( $TestArr AS $name => $arr )
 	{
-		$color = $colors[$name];
+		$color = $ColorList[$name];
 		// Create the linear plot
 		$lineplot=new LinePlot($arr);
 		$lineplot->SetLegend($name);

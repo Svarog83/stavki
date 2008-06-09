@@ -38,7 +38,9 @@ function CountSums ( $v, $sum_compare, $name_compare )
 
 ?>
 
-<a href="live.php?ent=<?= $ent?>">Настоящие данные</a> | <a href="enter_results.php?ent=<?= $ent?>">Ввод результатов</a> | <a href="stavki.php?ent=<?= $ent?>">Тест</a>
+<h1><?= $title?></h1>
+
+<a href="live.php?ent=<?= $ent?>">Настоящие данные</a> | <a href="enter_results.php?ent=<?= $ent?>">Ввод результатов</a> | <a href="stavki.php?ent=<?= $ent?>">Тест</a> | <a href="index.php">Домой</a>
 <br>
 <br>
 
@@ -54,20 +56,40 @@ if ( $_REQUEST['todo'] == 'form_2' )
 
 <?
 	
-$file = file ( $file_res );
+	$file = file ( $file_res );
+	
+	$ResultsArr  = array();
 
-$ResultsArr  = array();
+	$UserOrder = array();
+	foreach ( $file AS $k => $str )
+	{
+		$arr_t = explode( '|', $str );
+		$count = count ( $arr_t );
+		
+		if ( $k == 0 )
+		{
+			for ( $i = 3; $i < $count; $i++ )
+			{
+				$UserOrder[$i] = trim ( $arr_t[$i] );
+			}
+			
+		}
+		else 
+		{
+			$arr_t[0] = intval( $arr_t[0] );
+			$ResultsArr[$arr_t[0]] = array( 'numb' => trim ( $arr_t[0] ), 'who' => trim ( $arr_t[1] ), 'where' => trim ( $arr_t[2] ) );
+			
+			for ( $i = 3; $i < $count; $i++ )
+			{
+				$ResultsArr[$arr_t[0]]['users'][$UserOrder[$i]] = trim ( str_replace ( '-', ':', $arr_t[$i] ) );
+			}
+			
+		}
+	}
 
-foreach ( $file AS $str )
-{
-	$arr_t = explode( '|', $str );
-	$arr_t[0] = intval( $arr_t[0] );
-	$ResultsArr[$arr_t[0]] = array( 'numb' => trim ( $arr_t[0] ), 'who' => trim ( $arr_t[1] ), 'where' => trim ( $arr_t[2] ), 'users' => array (  'serg' => trim ( $arr_t[3] ), 'alex' => trim ( str_replace ( '-', ':', $arr_t[4] ) ), 'father' => trim ( $arr_t[5] ), 'alena' => trim ( str_replace ( '-', ':', $arr_t[6] ) ) ) );
-}
+	$i = 0;
 
-$i = 0;
-
-	$arr_names = array( 'serg', 'alex', 'alena', 'father' );
+	$arr_names = array_keys( $UserList );
 
 	$str = file_get_contents( $file_real_res );
 	$RealResults = unserialize( $str );
@@ -75,10 +97,6 @@ $i = 0;
 	$letter = 'A';
 	$t = 64;	
 
-	$result_sum 	= 200;
-	$diff_score_sum = 140;
-	$ishod_sum 		= 80;
-	
 	$SuperTotal = array();
 
 	$TheSameArr  = $RaznArr = $IshodArr = $GroupsArr = $GroupsResults = $TotalSums = $MatchResults = $UsersResults = array();
